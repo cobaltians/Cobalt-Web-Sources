@@ -52,7 +52,7 @@ var cobalt = {
             }
             cobalt.storage.enable();
 
-            cobalt.utils.extend(cobalt.nativeBars.handlers, options.onBarButtonPressed);
+            cobalt.utils.extend(cobalt.nativeBars.handlers, options.onBarActionPressed);
             cobalt.utils.extend(cobalt.datePicker, options.datePicker);
             if (cobalt.datePicker.enabled) {
                 cobalt.datePicker.init();
@@ -662,7 +662,7 @@ var cobalt = {
     },
     nativeBars: {
         handlers: {},
-        onBarButtonPressed: function (actionHandlers) {
+        onBarActionPressed: function (actionHandlers) {
             cobalt.utils.extend(cobalt.nativeBars.handlers, actionHandlers);
         },
         handleEvent: function (data) {
