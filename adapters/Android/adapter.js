@@ -42,7 +42,8 @@ cobalt.android_adapter = {
             data: {
 				page: options.page, 
 				controller: options.controller,
-				data : options.data
+				data : options.data,
+				bars : options.bars
 			}
         }, 'cobalt.adapter.storeModalInformations');
     },

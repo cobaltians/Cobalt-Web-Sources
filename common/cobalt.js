@@ -187,7 +187,8 @@ var cobalt = {
                         page : options.page,
                         controller : options.controller,
                         animated : (options.animated !== false), //default to true
-                        data : options.data
+                        data : options.data,
+                        bars : options.bars
                     }
                 });
                 if (cobalt.debugInBrowser && window.event && window.event.altKey) {
@@ -233,7 +234,8 @@ var cobalt = {
                         page : options.page,
                         controller : options.controller,
                         animated : (options.animated !== false), //default to true
-                        data : options.data
+                        data : options.data,
+                        bars : options.bars
                     }
                 });
                 if (cobalt.debugInBrowser && window.event && window.event.altKey) {
@@ -459,7 +461,8 @@ var cobalt = {
             cobalt.send({"type": "navigation", "action": "modal", data: {
                 page: options.page,
                 controller: options.controller,
-                data : options.data
+                data : options.data,
+                bars : options.bars
             }});
         },
         dismissFromModal: function (data) {
@@ -677,27 +680,60 @@ var cobalt = {
                 cobalt.send({type: "ui", control: "bars", data: data});
             }
         },
-        setVisibility: function (visibility) {
-            if (visibility && (typeof visibility.top != "undefined" || typeof visibility.top != "undefined")) {
-                cobalt.nativeBars.send({action: "setVisibility", visibility: visibility});
+        setBarsVisible: function (visible) {
+            if (visible && (typeof visible.top != "undefined" || typeof visible.bottom != "undefined")) {
+                cobalt.nativeBars.send({action: "setBarsVisible", visible: visible});
             } else {
-                cobalt.log('you should change at least one bar visibility')
+                cobalt.log('setBarsVisible : nothing to set.')
             }
         },
-        showButton: function (buttonName) {
-            if (buttonName) {
-                cobalt.nativeBars.send({action: "showButton", button: buttonName});
+        setBarContent: function (content) {
+            if (content && (
+                        typeof content.backgroundColor != "undefined"
+                    ||  typeof content.bottom != "undefined"
+                    ||  typeof content.androidIcon != "undefined"
+                    ||  typeof content.title != "undefined"
+                )) {
+                cobalt.nativeBars.send({action: "setBarContent", content: content});
+            } else {
+                cobalt.log('setBarContent : nothing to set.')
             }
         },
-        hideButton: function (buttonName) {
-            if (buttonName) {
-                cobalt.nativeBars.send({action: "hideButton", button: buttonName});
+        setActionContent: function (content) {
+            if (content && (
+                    typeof content.androidIcon != "undefined"
+                    ||  typeof content.iosIcon != "undefined"
+                    ||  typeof content.icon != "undefined"
+                    ||  typeof content.color != "undefined"
+                    ||  typeof content.title != "undefined"
+                )) {
+                cobalt.nativeBars.send({action: "setActionContent", content: content});
+            } else {
+                cobalt.log('setActionContent : nothing to set.')
             }
         },
-        setTexts: function (newTexts) {
-            if (newTexts) {
-                cobalt.nativeBars.send({action: "setTexts", texts: newTexts});
+        setActionParam:function(action, name, param, value){
+            if (param){
+                if (name){
+                    var obj={action: action, name: name };
+                    obj[param]=value;
+                    cobalt.nativeBars.send(obj);
+                }else{
+                    cobalt.log(action, ': no action name provided.')
+                }
             }
+        },
+        setActionVisible: function (name, visible) {
+            this.setActionParam("setActionVisible", name, "visible", visible);
+        },
+        setActionEnabled: function (name, enabled) {
+            this.setActionParam("setActionEnabled", name, "enabled", enabled);
+        },
+        setActionLabel: function (name, label) {
+            this.setActionParam("setActionLabel", name, "label", label);
+        },
+        setActionBadge: function (name, badge) {
+            this.setActionParam("setActionBadge", name, "badge", badge);
         }
     },
     datePicker: {
