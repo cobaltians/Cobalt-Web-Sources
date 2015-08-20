@@ -666,12 +666,12 @@ var cobalt = {
             cobalt.utils.extend(cobalt.nativeBars.handlers, actionHandlers);
         },
         handleEvent: function (data) {
-            if (data && data.action == "buttonPressed") {
-                cobalt.log('button pressed', data.button);
-                if (data.button && cobalt.nativeBars.handlers[data.button]) {
-                    cobalt.nativeBars.handlers[data.button]();
+            if (data && data.action == "actionPressed") {
+                cobalt.log('actionPressed', data.name);
+                if (data.button && cobalt.nativeBars.handlers[data.name]) {
+                    cobalt.nativeBars.handlers[data.name]();
                 } else {
-                    cobalt.log('no handler for button ', data.button);
+                    cobalt.log('no handler for action ', data.name);
                 }
             }
         },
