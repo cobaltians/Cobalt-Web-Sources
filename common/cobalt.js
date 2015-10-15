@@ -31,7 +31,7 @@ var cobalt = {
     callbacks: {},//array of all callbacks by callbackID
     lastCallbackId: 0,
 
-    /*	cobalt.init(options)
+    /*    cobalt.init(options)
      see doc for options
      */
     init: function (options) {
@@ -83,7 +83,7 @@ var cobalt = {
             this.events[eventName] = undefined;
         }
     },
-    /*	cobalt.log(stuff,...)
+    /*    cobalt.log(stuff,...)
      all arguments can be a string or an object. object will be json-ised and separated with a space.
      cobalt.log('toto')
      cobalt.log('a',5,{"hip":"hop"})
@@ -662,16 +662,22 @@ var cobalt = {
     },
     nativeBars: {
         handlers: {},
-        onBarActionPressed: function (actionHandlers) {
+        onBarActionPressed: function (actionHandlers, handlerMethodName) {
             cobalt.utils.extend(cobalt.nativeBars.handlers, actionHandlers);
+            cobalt.nativeBars.handlerMethodName = handlerMethodName;
         },
+        //cobalt.nativeBars.handleEvent({ action : "actionPressed", name : 0 });
         handleEvent: function (data) {
             if (data && data.action == "actionPressed") {
                 cobalt.log('actionPressed', data.name);
-                if (data.button && cobalt.nativeBars.handlers[data.name]) {
+                if (data.name && cobalt.nativeBars.handlers[data.name] ) {
+                  if (cobalt.nativeBars.handlerMethodName && cobalt.nativeBars.handlers[data.name][cobalt.nativeBars.handlerMethodName]){
+                      cobalt.nativeBars.handlers[data.name][cobalt.nativeBars.handlerMethodName]();
+                  }else{
                     cobalt.nativeBars.handlers[data.name]();
-                } else {
-                    cobalt.log('no handler for action ', data.name);
+                  }
+                }else {
+                  cobalt.log('no handler for action', data.name);
                 }
             }
         },
@@ -820,7 +826,7 @@ var cobalt = {
         }
     },
     storage: {
-        /*	localStorage helper
+        /*    localStorage helper
 
          cobalt.storage.set('town','Lannion');
          cobalt.storage.get('town');
