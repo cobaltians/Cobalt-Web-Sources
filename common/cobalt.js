@@ -668,26 +668,20 @@ var cobalt = {
             })
         }
     },
-    nativeBars: {
-        handlers: {},
-        onBarActionPressed: function (actionHandlers, handlerMethodName) {
-            cobalt.utils.extend(cobalt.nativeBars.handlers, actionHandlers);
-            cobalt.nativeBars.handlerMethodName = handlerMethodName;
+    bars: {
+        handler: undefined,
+        setEventListener: function (handler) {
+             cobalt.nativeBars.handler = handler;
         },
-        //cobalt.nativeBars.handleEvent({ action : "actionPressed", name : 0 });
         handleEvent: function (data) {
-            if (data && data.action == "actionPressed") {
-                cobalt.log('actionPressed', data.name);
-                if (data.name && cobalt.nativeBars.handlers[data.name] ) {
-                  if (cobalt.nativeBars.handlerMethodName && cobalt.nativeBars.handlers[data.name][cobalt.nativeBars.handlerMethodName]){
-                      cobalt.nativeBars.handlers[data.name][cobalt.nativeBars.handlerMethodName]();
-                  }else{
-                    cobalt.nativeBars.handlers[data.name]();
-                  }
-                }else {
-                  cobalt.log('no handler for action', data.name);
-                }
+          if (data && data.action === "actionPressed") {
+            cobalt.log(data.action, data.name);
+            if (data.name && cobalt.nativeBars.handler) {
+              cobalt.nativeBars.handler(data.name, data.action);
+            }else {
+              cobalt.log('no handler defined. use setEventListener');
             }
+          }
         },
         send: function (data) {
             if (data) {
