@@ -667,7 +667,7 @@ var cobalt = {
             })
         }
     },
-    bars: {
+    nativeBars: {
         handler: undefined,
         setEventListener: function (handler) {
              cobalt.nativeBars.handler = handler;
