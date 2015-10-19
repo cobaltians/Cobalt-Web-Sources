@@ -444,7 +444,15 @@ var cobalt = {
             if (cobalt.events && typeof cobalt.events[json.event] === "function") {
                 cobalt.events[json.event](json.data, json.callback);
             } else {
-                cobalt.adapter.handleUnknown(json)
+                switch (json.event) {
+                    case "onBackButtonPressed":
+                        cobalt.log('sending OK for a native back');
+                        cobalt.sendCallback(json.callback, {value: true});
+                        break;
+                    default :
+                        cobalt.adapter.handleUnknown(json);
+                        break;
+                }
             }
         },
         handleCallback: function (json) {
