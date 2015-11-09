@@ -232,7 +232,8 @@ var cobalt = {
                     data : {
                         page : options.page,
                         controller : options.controller,
-                        animated : (options.animated !== false), //default to true
+                        animated : (options.animated === false) ? false : true, //default to true
+                        clearHistory : (options.clearHistory === true), //default to false
                         data : options.data
                     }
                 });
