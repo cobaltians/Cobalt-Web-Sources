@@ -131,8 +131,8 @@ var cobalt = {
     //Sends an object to native side.
     //See doc for guidelines.
     send: function (obj, callback) {
-        if (! typeof obj === "object" ) return;
-        if (callback){
+        if (!typeof obj === "object") return;
+        if (callback) {
             obj.callback = cobalt.registerCallback(callback);
         }
         if (cobalt.debugInBrowser) {
@@ -142,7 +142,7 @@ var cobalt = {
             cobalt.adapter.send(obj, callback);
         }
     },
-    registerCallback:function(callback){
+    registerCallback: function (callback) {
         var callbackId;
         if (callback) {
             if (typeof callback === "function") {
@@ -176,45 +176,45 @@ var cobalt = {
         }
     },
     //Navigate to an other page or do some special navigation actions
-    navigate:{
+    navigate: {
         //cobalt.navigate.push({ page : "next.html", controller:"myController", animated:false });
-        push:function(options){
-            if (options && (options.page || options.controller)){
+        push: function (options) {
+            if (options && (options.page || options.controller)) {
                 cobalt.send({
-                    type : "navigation",
-                    action : "push",
-                    data : {
-                        page : options.page,
-                        controller : options.controller,
-                        animated : (options.animated !== false), //default to true
-                        data : options.data
+                    type: "navigation",
+                    action: "push",
+                    data: {
+                        page: options.page,
+                        controller: options.controller,
+                        animated: (options.animated !== false), //default to true
+                        data: options.data
                     }
                 });
                 if (cobalt.debugInBrowser && window.event && window.event.altKey) {
-                    setTimeout(function(){
-                        window.open(options.page,'_blank');
-                    },0);
+                    setTimeout(function () {
+                        window.open(options.page, '_blank');
+                    }, 0);
                 }
             }
         },
         //cobalt.navigate.pop();
-        pop:function(data){
-            cobalt.send({"type": "navigation", "action": "pop", data: { data : data}});
+        pop: function (data) {
+            cobalt.send({"type": "navigation", "action": "pop", data: {data: data}});
 
             if (cobalt.debugInBrowser && window.event && window.event.altKey) {
                 window.close();
             }
         },
         //cobalt.navigate.popTo({ page : "next.html", controller:"myController" });
-        popTo:function(options){
-            if (options && (options.page || options.controller)){
+        popTo: function (options) {
+            if (options && (options.page || options.controller)) {
                 cobalt.send({
-                    type : "navigation",
-                    action : "pop",
+                    type: "navigation",
+                    action: "pop",
                     data: {
-                        page : options.page,
-                        controller : options.controller,
-                        data : options.data
+                        page: options.page,
+                        controller: options.controller,
+                        data: options.data
                     }
                 });
 
@@ -224,36 +224,36 @@ var cobalt = {
             }
         },
         //cobalt.navigate.replace({ page : "next.html", controller:"myController", animated:false });
-        replace:function(options){
-            if (options && (options.page || options.controller)){
+        replace: function (options) {
+            if (options && (options.page || options.controller)) {
                 cobalt.send({
-                    type : "navigation",
-                    action : "replace",
-                    data : {
-                        page : options.page,
-                        controller : options.controller,
-                        animated : (options.animated === false) ? false : true, //default to true
-                        clearHistory : (options.clearHistory === true), //default to false
-                        data : options.data
+                    type: "navigation",
+                    action: "replace",
+                    data: {
+                        page: options.page,
+                        controller: options.controller,
+                        animated: (options.animated === false) ? false : true, //default to true
+                        clearHistory: (options.clearHistory === true), //default to false
+                        data: options.data
                     }
                 });
                 if (cobalt.debugInBrowser && window.event && window.event.altKey) {
-                    location.href=options.page;
+                    location.href = options.page;
                 }
             }
         },
-        modal:function(options){
-            if (options && (options.page || options.controller)){
+        modal: function (options) {
+            if (options && (options.page || options.controller)) {
                 cobalt.adapter.navigateToModal(options);
 
                 if (cobalt.debugInBrowser && window.event && window.event.altKey) {
-                    setTimeout(function(){
-                        window.open(options.page,'_blank');
-                    },0);
+                    setTimeout(function () {
+                        window.open(options.page, '_blank');
+                    }, 0);
                 }
             }
         },
-        dismiss:function(data){
+        dismiss: function (data) {
             cobalt.adapter.dismissFromModal(data);
 
             if (cobalt.debugInBrowser && window.event && window.event.altKey) {
@@ -270,20 +270,20 @@ var cobalt = {
      */
     alert: function (options) {
 
-        var obj={};
+        var obj = {};
 
         if (options && (options.message || options.title )) {
-            if (typeof options == "string"){
-                options = { message : options };
+            if (typeof options == "string") {
+                options = {message: options};
             }
 
-            cobalt.utils.extend(obj,{
-                title : options.title,
-                message : options.message,
+            cobalt.utils.extend(obj, {
+                title: options.title,
+                message: options.message,
                 //ensure buttons is an array of strings or default to one Ok button
-                buttons : (options.buttons && cobalt.utils.isArray(options.buttons) && options.buttons.length) ? options.buttons : ['Ok'],
+                buttons: (options.buttons && cobalt.utils.isArray(options.buttons) && options.buttons.length) ? options.buttons : ['Ok'],
                 //only supported on Android
-                cancelable : (options.cancelable) ? true : false
+                cancelable: (options.cancelable) ? true : false
             });
 
             var callback = ( typeof options.callback === "string" || typeof options.callback === "function" ) ? options.callback : undefined;
@@ -292,25 +292,25 @@ var cobalt = {
                 type: "ui", control: "alert", data: obj
             }, callback);
 
-            if (cobalt.debugInBrowser){
+            if (cobalt.debugInBrowser) {
                 var btns_str = "";
-                cobalt.utils.each(obj.buttons,function(index, button){
+                cobalt.utils.each(obj.buttons, function (index, button) {
                     btns_str += "\t" + index + " - " + button + "\n";
                 });
-                var index = parseInt( window.prompt(
+                var index = parseInt(window.prompt(
                     "Title : " + obj.title + "\n"
                     + "Message : " + obj.message + "\n"
-                    + "Choices : \n" + btns_str ,0), 10);
+                    + "Choices : \n" + btns_str, 0), 10);
 
-                switch (typeof callback){
+                switch (typeof callback) {
                     case "function":
-                        callback({ index : (index==NaN) ? undefined : index });
+                        callback({index: (index == NaN) ? undefined : index});
                         break;
                     case "string":
                         var str_call = callback + "({index : " + index + "})";
-                        try{
+                        try {
                             eval(str_call);
-                        }catch (e){
+                        } catch (e) {
                             cobalt.log('failed to call ', str_call);
                         }
                         break;
@@ -457,14 +457,16 @@ var cobalt = {
             cobalt.log('received unhandled message ', json);
         },
         navigateToModal: function (options) {
-            cobalt.send({"type": "navigation", "action": "modal", data: {
-                page: options.page,
-                controller: options.controller,
-                data : options.data
-            }});
+            cobalt.send({
+                "type": "navigation", "action": "modal", data: {
+                    page: options.page,
+                    controller: options.controller,
+                    data: options.data
+                }
+            });
         },
         dismissFromModal: function (data) {
-            cobalt.send({"type": "navigation", "action": "dismiss", data:{ data : data }});
+            cobalt.send({"type": "navigation", "action": "dismiss", data: {data: data}});
         },
         initStorage: function () {
             return cobalt.storage.enable()
@@ -500,7 +502,7 @@ var cobalt = {
             }
             return stuff;
         },
-        
+
         class2type: {},
         attr: function (node, attr, value) {
             node = cobalt.utils.$(node);
@@ -829,22 +831,22 @@ var cobalt = {
                 this.storage.clear();
             }
         },
-        set:function(uid, value){
+        set: function (uid, value) {
             if (this.storage) {
                 var obj = {
-                    t : typeof value,
-                    v : value
+                    t: typeof value,
+                    v: value
                 };
-                if (obj.v instanceof Date){
-                    obj.t="date";
+                if (obj.v instanceof Date) {
+                    obj.t = "date";
                 }
                 return this.storage.setItem(uid, JSON.stringify(obj));
             }
         },
-        get:function(uid){
+        get: function (uid) {
             if (this.storage) {
-                var val = this.storage.getItem(uid,'json');
-                val=JSON.parse(val);
+                var val = this.storage.getItem(uid, 'json');
+                val = JSON.parse(val);
                 if (val) {
                     switch (val.t) {
                         case "date":
