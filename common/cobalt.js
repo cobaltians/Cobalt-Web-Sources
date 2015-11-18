@@ -740,10 +740,10 @@ var cobalt = {
             this.setActionParam("setActionBadge", name, "badge", badge);
         },
         setBars: function (newBars) {
-            if (cobalt.utils.isObject(newBars) && cobalt.utils.isArray(newBars.actions)) {
+            if (cobalt.utils.isObject(newBars)) {
                 cobalt.nativeBars.send({action: "setBars", bars: newBars});
             } else {
-                cobalt.log('setBars: no actions provided.')
+                cobalt.log('setBars: no bars provided.')
             }
         }
     },
