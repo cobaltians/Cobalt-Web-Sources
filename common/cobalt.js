@@ -704,19 +704,19 @@ var cobalt = {
                 cobalt.log('setBarContent : nothing to set.')
             }
         },
-        setActionContent: function (content) {
-            if (content && (
-                    typeof content.androidIcon != "undefined"
-                    || typeof content.iosIcon != "undefined"
-                    || typeof content.icon != "undefined"
-                    || typeof content.color != "undefined"
-                    || typeof content.title != "undefined"
-                )) {
-                cobalt.nativeBars.send({action: "setActionContent", content: content});
-            } else {
-                cobalt.log('setActionContent : nothing to set.')
-            }
-        },
+        setActionContent: function (name, content) {
+                    if (name && content && (
+                            typeof content.androidIcon != "undefined"
+                            || typeof content.iosIcon != "undefined"
+                            || typeof content.icon != "undefined"
+                            || typeof content.color != "undefined"
+                            || typeof content.title != "undefined"
+                        )) {
+                        cobalt.nativeBars.send({action: "setActionContent", name:name, content: content});
+                    } else {
+                        cobalt.log('setActionContent : nothing to set.')
+                    }
+                },
         setActionParam: function (action, name, param, value) {
             if (param) {
                 if (name) {
