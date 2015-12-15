@@ -673,13 +673,11 @@ var cobalt = {
             cobalt.nativeBars.handler = handler;
         },
         handleEvent: function (data) {
-            if (data && data.action === "actionPressed") {
-                cobalt.log(data.action, data.name);
-                if (data.name && cobalt.nativeBars.handler) {
-                    cobalt.nativeBars.handler(data.name, data.action);
-                } else {
-                    cobalt.log('no handler defined. use setEventListener');
-                }
+            cobalt.log(data.action, data.name);
+            if (data.name && cobalt.nativeBars.handler) {
+                cobalt.nativeBars.handler(data.name, data.action);
+            } else {
+                cobalt.log('no handler defined. use setEventListener');
             }
         },
         send: function (data) {
