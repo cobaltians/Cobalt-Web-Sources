@@ -673,9 +673,9 @@ var cobalt = {
             cobalt.nativeBars.handler = handler;
         },
         handleEvent: function (data) {
-            cobalt.log(data.action, data.name);
+            cobalt.log(data.action, data.name, data.data);
             if (data.name && cobalt.nativeBars.handler) {
-                cobalt.nativeBars.handler(data.name, data.action);
+                cobalt.nativeBars.handler(data.name, data.action, data.data);
             } else {
                 cobalt.log('no handler defined. use setEventListener');
             }
