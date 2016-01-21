@@ -735,7 +735,7 @@ var cobalt = {
             this.setActionParam("setActionEnabled", name, "enabled", enabled);
         },
         setActionBadge: function (name, badge) {
-            this.setActionParam("setActionBadge", name, "badge", badge);
+            this.setActionParam("setActionBadge", name, "badge", '' + badge);
         },
         setBars: function (newBars) {
             if (cobalt.utils.isObject(newBars)) {
