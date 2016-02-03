@@ -159,7 +159,7 @@ var cobalt = {
             var obj = {
                 type: "event",
                 event: eventName,
-                data: params || {}
+                data: params
             };
             cobalt.send(obj, callback);
         }
