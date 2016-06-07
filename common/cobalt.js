@@ -195,30 +195,19 @@ var cobalt = {
                 }
             }
         },
-        //cobalt.navigate.pop();
-        pop: function (data) {
-            cobalt.send({"type": "navigation", "action": "pop", data: {data: data}});
-
+        //cobalt.navigate.popTo({ page : "next.html", controller:"myController", data :{}});
+        pop: function (options) {
+            cobalt.send({
+                type: "navigation",
+                action: "pop",
+                data: {
+                    page: options.page,
+                    controller: options.controller,
+                    data: options.data
+                }
+            });
             if (cobalt.debugInBrowser && window.event && window.event.altKey) {
                 window.close();
-            }
-        },
-        //cobalt.navigate.popTo({ page : "next.html", controller:"myController" });
-        popTo: function (options) {
-            if (options && (options.page || options.controller)) {
-                cobalt.send({
-                    type: "navigation",
-                    action: "pop",
-                    data: {
-                        page: options.page,
-                        controller: options.controller,
-                        data: options.data
-                    }
-                });
-
-                if (cobalt.debugInBrowser && window.event && window.event.altKey) {
-                    window.close();
-                }
             }
         },
         //cobalt.navigate.replace({ page : "next.html", controller:"myController", animated:false });
