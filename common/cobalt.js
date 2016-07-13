@@ -68,7 +68,9 @@ var cobalt = {
         cobalt.plugins.init();
 
         //send cobalt is ready event to native
-        cobalt.send({'type': 'cobaltIsReady', version: this.version})
+        if (!options.manualReady){
+            cobalt.send({'type': 'cobaltIsReady', version: this.version})
+        }
     },
     addEventListener: function (eventName, handlerFunction) {
         if (typeof eventName === "string" && typeof handlerFunction === "function") {
