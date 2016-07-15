@@ -26,7 +26,8 @@ cobalt.android_adapter = {
 				page: options.page,
 				controller: options.controller,
 				data : options.data,
-				bars : options.bars
+				bars : options.bars,
+				statusBar : options.statusBar
 			}
         }, 'cobalt.adapter.storeModalInformations');
     },
