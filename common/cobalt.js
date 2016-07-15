@@ -187,7 +187,8 @@ var cobalt = {
                         controller: options.controller,
                         animated: (options.animated !== false), //default to true
                         data: options.data,
-                        bars: options.bars
+                        bars: options.bars,
+                        statusBar: options.statusBar
                     }
                 });
                 if (cobalt.debugInBrowser && window.event && window.event.altKey) {
@@ -224,7 +225,8 @@ var cobalt = {
                         animated: (options.animated !== false), //default to true
                         clearHistory: (options.clearHistory === true), //default to false
                         data: options.data,
-                        bars: options.bars
+                        bars: options.bars,
+                        statusBar: options.statusBar
                     }
                 });
                 if (cobalt.debugInBrowser && window.event && window.event.altKey) {
@@ -459,7 +461,7 @@ var cobalt = {
                     page: options.page,
                     controller: options.controller,
                     data: options.data,
-                    bars: options.bars
+                    statusBar: options.statusBar
                 }
             });
         },
@@ -733,6 +735,13 @@ var cobalt = {
                 cobalt.nativeBars.send({action: "setBars", bars: newBars});
             } else {
                 cobalt.log('setBars: no bars provided.')
+            }
+        }
+    },
+    statusBar:{
+        set:function(configuration){
+            if (configuration && configuration.visible !== undefined || configuration.lightText !== undefined) {
+                cobalt.send({type: "ui", control: "statusBar", data: { action : "set", bar : configuration }});
             }
         }
     },
