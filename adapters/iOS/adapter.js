@@ -16,7 +16,7 @@ cobalt.ios_adapter = {
                     cobalt.log('ERROR : cant stringify message to send to native', e);
                 }
             } else {
-                cobalt.divLog('ERROR : cant connect to native.' + e);
+                cobalt.divLog('ERROR : cant connect to native.');
             }
         }
     },
