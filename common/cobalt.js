@@ -203,9 +203,9 @@ var cobalt = {
                 type: "navigation",
                 action: "pop",
                 data: {
-                    page: options.page,
-                    controller: options.controller,
-                    data: options.data
+                    page: options && options.page,
+                    controller: options && options.controller,
+                    data: options && options.data
                 }
             });
             if (cobalt.debugInBrowser && window.event && window.event.altKey) {
