@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var cobalt = {
+var cobalt = window.cobalt || {
     version: '0.5.1',
     events: {}, //objects of events defined by the user
     debug: false,
