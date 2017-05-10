@@ -336,23 +336,27 @@ var cobalt = window.cobalt || {
     /*
      show a web page as an layer.
      //see doc for guidelines.
-     //cobalt.webLayer("show","tests_12_webAlertContent.html",1.2);
-     //cobalt.webLayer("dismiss");
+     //cobalt.webLayer.show("tests_12_webAlertContent.html",1.2);
+     //cobalt.webLayer.dismiss();
      //in next example, foobar object will be sent in onWebLayerDismissed :
-     //cobalt.webLayer("dismiss",{ foo : "bar"});
+     //cobalt.webLayer.dismiss({ foo : "bar"});
      */
-    webLayer: function (action, data, fadeDuration) {
-        switch (action) {
-            case "dismiss":
-                cobalt.send({type: "webLayer", action: "dismiss", data: data});
-                break;
-            case "show":
-                if (data) {
-                    cobalt.send({type: "webLayer", action: "show", data: {page: data, fadeDuration: fadeDuration}})
-                }
-                break;
-        }
-    },
+	webLayer:{
+		show:function(page, fadeDuration){
+            if (page) {
+                cobalt.send({type: "webLayer", action: "show", data: {page: page, fadeDuration: fadeDuration}})
+            }
+		},
+		dismiss:function(data){
+			cobalt.send({type: "webLayer", action: "dismiss", data: data});
+		},
+		bringToFront:function(){
+			cobalt.send({type: "webLayer", action: "bringToFront"});
+		},
+		sendToBack:function(){
+			cobalt.send({type: "webLayer", action: "sendToBack"});
+		}
+	},
     /*
      open an url in the device browser.
      //cobalt.openExternalUrl("http://cobaltians.com")
