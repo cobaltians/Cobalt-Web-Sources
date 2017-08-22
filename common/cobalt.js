@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var cobalt = {
+var cobalt = window.cobalt || {
     version: '0.5.1',
     events: {}, //objects of events defined by the user
     debug: false,
@@ -40,7 +40,9 @@ var cobalt = {
 
         if (options) {
             this.debug = ( options.debug === true );
-            this.debugInBrowser = ( options.debugInBrowser === true );
+			if (options.debugInBrowser !== undefined) {
+				this.debugInBrowser = options.debugInBrowser;
+			}
             this.debugInDiv = ( options.debugInDiv === true );
             this.plugins.pluginsOptions = options.plugins || {};
 
@@ -68,7 +70,9 @@ var cobalt = {
         cobalt.plugins.init();
 
         //send cobalt is ready event to native
-        cobalt.send({'type': 'cobaltIsReady', version: this.version})
+        if (!options.manualReady){
+            cobalt.send({'type': 'cobaltIsReady', version: this.version})
+        }
     },
     addEventListener: function (eventName, handlerFunction) {
         if (typeof eventName === "string" && typeof handlerFunction === "function") {
@@ -195,30 +199,19 @@ var cobalt = {
                 }
             }
         },
-        //cobalt.navigate.pop();
-        pop: function (data) {
-            cobalt.send({"type": "navigation", "action": "pop", data: {data: data}});
-
+        //cobalt.navigate.popTo({ page : "next.html", controller:"myController", data :{}});
+        pop: function (options) {
+            cobalt.send({
+                type: "navigation",
+                action: "pop",
+                data: {
+                    page: options && options.page,
+                    controller: options && options.controller,
+                    data: options && options.data
+                }
+            });
             if (cobalt.debugInBrowser && window.event && window.event.altKey) {
                 window.close();
-            }
-        },
-        //cobalt.navigate.popTo({ page : "next.html", controller:"myController" });
-        popTo: function (options) {
-            if (options && (options.page || options.controller)) {
-                cobalt.send({
-                    type: "navigation",
-                    action: "pop",
-                    data: {
-                        page: options.page,
-                        controller: options.controller,
-                        data: options.data
-                    }
-                });
-
-                if (cobalt.debugInBrowser && window.event && window.event.altKey) {
-                    window.close();
-                }
             }
         },
         //cobalt.navigate.replace({ page : "next.html", controller:"myController", animated:false });
@@ -345,23 +338,27 @@ var cobalt = {
     /*
      show a web page as an layer.
      //see doc for guidelines.
-     //cobalt.webLayer("show","tests_12_webAlertContent.html",1.2);
-     //cobalt.webLayer("dismiss");
+     //cobalt.webLayer.show("tests_12_webAlertContent.html",1.2);
+     //cobalt.webLayer.dismiss();
      //in next example, foobar object will be sent in onWebLayerDismissed :
-     //cobalt.webLayer("dismiss",{ foo : "bar"});
+     //cobalt.webLayer.dismiss({ foo : "bar"});
      */
-    webLayer: function (action, data, fadeDuration) {
-        switch (action) {
-            case "dismiss":
-                cobalt.send({type: "webLayer", action: "dismiss", data: data});
-                break;
-            case "show":
-                if (data) {
-                    cobalt.send({type: "webLayer", action: "show", data: {page: data, fadeDuration: fadeDuration}})
-                }
-                break;
-        }
-    },
+	webLayer:{
+		show:function(page, fadeDuration){
+            if (page) {
+                cobalt.send({type: "webLayer", action: "show", data: {page: page, fadeDuration: fadeDuration}})
+            }
+		},
+		dismiss:function(data){
+			cobalt.send({type: "webLayer", action: "dismiss", data: data});
+		},
+		bringToFront:function(){
+			cobalt.send({type: "webLayer", action: "bringToFront"});
+		},
+		sendToBack:function(){
+			cobalt.send({type: "webLayer", action: "sendToBack"});
+		}
+	},
     /*
      open an url in the device browser.
      //cobalt.openExternalUrl("http://cobaltians.com")
