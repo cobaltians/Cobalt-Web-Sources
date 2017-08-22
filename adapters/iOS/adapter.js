@@ -46,4 +46,3 @@ cobalt.ios_adapter = {
     initStorage: cobalt.defaultBehaviors.initStorage
 
 };
-cobalt.adapter = cobalt.ios_adapter;

@@ -126,4 +126,3 @@ cobalt.android_adapter = {
     handleCallback: cobalt.defaultBehaviors.handleCallback,
     handleUnknown: cobalt.defaultBehaviors.handleUnknown
 };
-cobalt.adapter = cobalt.android_adapter;
