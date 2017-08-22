@@ -40,7 +40,9 @@ var cobalt = window.cobalt || {
 
         if (options) {
             this.debug = ( options.debug === true );
-            this.debugInBrowser = ( options.debugInBrowser === true );
+			if (options.debugInBrowser !== undefined) {
+				this.debugInBrowser = options.debugInBrowser;
+			}
             this.debugInDiv = ( options.debugInDiv === true );
             this.plugins.pluginsOptions = options.plugins || {};
 
