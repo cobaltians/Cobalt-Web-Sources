@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 var cobalt = window.cobalt || {
-    version: '0.5.1',
+    version: '0.6',
     events: {}, //objects of events defined by the user
     debug: false,
     debugInBrowser: false,
