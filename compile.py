@@ -34,7 +34,7 @@ with open(distrib_file_path, 'w+') as outfile:
 
 print "\ncreating minified version"
 os.chdir(distrib_path)
-os.system('uglifyjs --source-map {libName}.min.js.maps -o {libName}.min.js {libName}.js'.format(libName=libName))
+os.system('uglifyjs --source-map {libName}.min.js.map -o {libName}.min.js {libName}.js'.format(libName=libName))
         
 
 print "\n---finished"
