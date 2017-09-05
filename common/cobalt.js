@@ -136,10 +136,12 @@ var cobalt = window.cobalt || {
         if (callback) {
             obj.callback = cobalt.registerCallback(callback);
         }
+		if (window.Android || window.CobaltViewController){
+		  cobalt.debugInBrowser = false;
+		}		
         if (cobalt.debugInBrowser) {
             cobalt.log('sending', obj);
-        }
-        if (cobalt.adapter) {
+        } else if (cobalt.adapter) {
             cobalt.adapter.send(obj, callback);
         }
     },
