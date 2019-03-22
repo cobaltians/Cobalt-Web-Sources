@@ -63,64 +63,6 @@ cobalt.android_adapter = {
     }
     return cobalt.storage.enable();
   },
-  //datePicker stuff
-  datePicker: {
-    init: function(inputs) {
-
-      cobalt.utils.each(inputs, function() {
-        var input = this;
-        var id = cobalt.utils.attr(input, 'id');
-
-        cobalt.log('datePicker setted with value=' + input.value);
-        cobalt.utils.attr(input, 'type', 'text');
-        cobalt.datePicker.enhanceFieldValue.apply(input);
-
-        input.addEventListener('focus', function() {
-          cobalt.log('show formPicker date for date #', id);
-          input.blur();
-          var previousDate = cobalt.storage.get('CobaltDatePickerValue_' + id);
-          if (!previousDate) {
-            var d = new Date();
-            previousDate = {
-              year: d.getFullYear(),
-              day: d.getDate(),
-              month: d.getMonth() + 1
-            }
-          }
-          cobalt.send({
-            type: "ui", control: "picker", data: {
-              type: "date", date: previousDate,
-              texts: cobalt.datePicker.texts
-            }
-          }, function(newDate) {
-            if (newDate && newDate.year) {
-              input.value = newDate.year + '-' + newDate.month + '-' + newDate.day;
-              cobalt.log('setting storage date ', newDate);
-              cobalt.storage.set('CobaltDatePickerValue_' + id, newDate);
-              cobalt.datePicker.enhanceFieldValue.apply(input);
-            } else {
-              cobalt.log('removing storage date');
-              input.value = "";
-              cobalt.storage.remove('CobaltDatePickerValue_' + id)
-            }
-          });
-          return false;
-
-        }, false);
-
-      });
-    },
-    val: function(input) {
-      var date = cobalt.storage.get('CobaltDatePickerValue_' + cobalt.utils.attr(input, 'id'));
-      if (date) {
-        var str_date = cobalt.datePicker.stringifyDate(date);
-        cobalt.log('returning storage date ', str_date);
-        return str_date;
-      }
-      return undefined;
-    }
-  },
-
   //default behaviours
   handleEvent: cobalt.defaultBehaviors.handleEvent,
   handleCallback: cobalt.defaultBehaviors.handleCallback,
