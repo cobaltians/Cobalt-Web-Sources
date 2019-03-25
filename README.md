@@ -16,5 +16,5 @@ To build cobalt.js and cobalt.min.js files for each platform in one row, run the
 ##### Building requirements
 
 * You will need Python > 2.7
-* 'uglifyjs' should be installed first for minified versions to be built. You can find UglifyJS [here](https://github.com/mishoo/UglifyJS) as a node package.
+* 'uglifyjs' should be installed first for minified versions to be built. You can find UglifyJS [here](https://github.com/mishoo/UglifyJS2) as a node package.
 * make sure to have git cloned [Cobalt-Web](https://github.com/cobaltians/Cobalt-Web)in the same folder as this one because the script will try to write to `../Cobalt-Web/`
