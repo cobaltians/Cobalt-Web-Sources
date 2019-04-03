@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Cobaltians
+ * Copyright (c) 2019 Cobaltians
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 var cobalt = window.cobalt || {
-  version: '0.6',
   events: {}, //objects of events defined by the user
+  version: '1.0',
   debug: false,
   debugInBrowser: false,
   debugInDiv: false,
