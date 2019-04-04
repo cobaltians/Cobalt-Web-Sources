@@ -20,6 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * TODO remove debugInDiv
+ * TODO missing debugInBrowser unsubscribe.
+ * TODO remove execute shortcut. native should cll cobalt.private.execute
+ * TODO write in-code documentation for all public methods
  */
 var cobalt = window.cobalt || {
   // public settings
@@ -111,7 +116,6 @@ var cobalt = window.cobalt || {
       return false
     }
     cobalt.private.send({ type : "pubsub", action : "unsubscribe", channel : channel  });
-    // TODO missing debugInBrowser unsubscribe.
   },
   navigate: {
     push: function(options) {
@@ -419,7 +423,6 @@ var cobalt = window.cobalt || {
       return cobalt.private.plugins.register(plugin);
     }
   },
-  //TODO : called from native. change on native side and remove this shortcut from public
   execute: function(json) {
     return cobalt.private.execute(json)
   },
