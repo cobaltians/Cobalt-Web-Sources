@@ -63,6 +63,56 @@ var cobalt = window.cobalt || {
       cobalt.private.divLog(logString)
     }
   },
+  publish: function(channel, message){
+    if (!message) message = {};
+    if (typeof channel !== "string") {
+      cobalt.log('pubsub error : channel must be a string.')
+      return false
+    }
+    if (typeof message !== "object" || Array.isArray(message)) {
+      cobalt.log('pubsub error : message must be an object.')
+      return false
+    }
+    cobalt.private.send({ type : "pubsub", action : "publish", channel : channel, message : message});
+    if (cobalt.private.debugInBrowser){
+      //use a storage fallback for debugging.
+      console.log('sending cobalt pubsub for channel', channel, 'with message', message);
+      localStorage.setItem('COBALT:DEBUG:PUBSUB:' + channel, JSON.stringify(message));
+    }
+  },
+  subscribe: function(channel, callback){
+    if (typeof channel !== "string") {
+      cobalt.log('pubsub error : channel must be a string.')
+      return false
+    }
+    var callback_id = cobalt.registerCallback(callback)
+    if (typeof callback_id !== "string") {
+      cobalt.log('pubsub error : callback must be function.');
+      return false
+    }
+    cobalt.private.send({ type : "pubsub", action : "subscribe", channel : channel, callback : callback_id });
+
+    if (cobalt.debugInBrowser) {
+      //use a storage fallback for debugging.
+      setInterval(function() {
+        var msg = localStorage.getItem('COBALT:DEBUG:PUBSUB:' + channel);
+        if (msg) {
+          var message = JSON.parse(msg);
+          console.log('received cobalt pubsub event for channel', channel, 'with message', message);
+          callback(message);
+          localStorage.removeItem('COBALT:DEBUG:PUBSUB:' + channel);
+        }
+      }, 500);
+    }
+  },
+  unsubscribe: function(channel){
+    if (typeof channel !== "string") {
+      cobalt.log('pubsub error : channel must be a string.');
+      return false
+    }
+    cobalt.private.send({ type : "pubsub", action : "unsubscribe", channel : channel  });
+    // TODO missing debugInBrowser unsubscribe.
+  },
   navigate: {
     push: function(options) {
       if (options && (options.page || options.controller)) {
