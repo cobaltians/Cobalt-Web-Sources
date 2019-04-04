@@ -136,97 +136,6 @@ var cobalt = window.cobalt || {
       }
     }
   },
-  toast: function(text) {
-    cobalt.private.send({type: "ui", control: "toast", data: {message: cobalt.private.utils.logToString(text)}});
-  },
-  alert: function(options) {
-    var obj = {};
-    if (options && (options.message || options.title )) {
-      if (typeof options === "string") {
-        options = {message: options};
-      }
-      cobalt.private.utils.extend(obj, {
-        title: options.title,
-        message: options.message,
-        //ensure buttons is an array of strings or default to one Ok button
-        buttons: (options.buttons && cobalt.private.utils.isArray(options.buttons) && options.buttons.length) ? options.buttons : ['Ok'],
-        //only supported on Android
-        cancelable: (options.cancelable) ? true : false
-      });
-      var callback = ( typeof options.callback === "string" || typeof options.callback === "function" ) ? options.callback : undefined;
-      cobalt.private.send({
-        type: "ui", control: "alert", data: obj
-      }, callback);
-      if (cobalt.private.debugInBrowser) {
-        var btns_str = "";
-        cobalt.private.utils.each(obj.buttons, function(index, button) {
-          btns_str += "\t" + index + " - " + button + "\n";
-        });
-        var index = parseInt(window.prompt(
-          "Title : " + obj.title + "\n"
-          + "Message : " + obj.message + "\n"
-          + "Choices : \n" + btns_str, 0), 10);
-
-        switch (typeof callback) {
-          case "function":
-            callback({index: isNaN(index) ? undefined : index});
-            break;
-          case "string":
-            var str_call = callback + "({index : " + index + "})";
-            try {
-              eval(str_call);
-            } catch (e) {
-              cobalt.log('failed to call ', str_call);
-            }
-            break;
-        }
-      }
-    }
-  },
-  pullToRefresh: {
-    setTexts: function(pullToRefreshText, refreshingText) {
-      if (typeof pullToRefreshText !== "string") pullToRefreshText = undefined;
-      if (typeof refreshingText !== "string") pullToRefreshText = undefined
-      cobalt.private.send({
-        type: "ui",
-        control: "pullToRefresh",
-        data: {
-          action: "setTexts",
-          texts: {
-            pullToRefresh: pullToRefreshText,
-            refreshing: refreshingText
-          }
-        }
-      });
-    }
-  },
-  webLayer: {
-    show: function(page, fadeDuration) {
-      if (page) {
-        cobalt.private.send({type: "webLayer", action: "show", data: {page: page, fadeDuration: fadeDuration}})
-      }
-    },
-    dismiss: function(data) {
-      cobalt.private.send({type: "webLayer", action: "dismiss", data: data});
-    },
-    bringToFront: function() {
-      cobalt.private.send({type: "webLayer", action: "bringToFront"});
-    },
-    sendToBack: function() {
-      cobalt.private.send({type: "webLayer", action: "sendToBack"});
-    }
-  },
-  openExternalUrl: function(url) {
-    if (url) {
-      cobalt.private.send({
-        type: "intent",
-        action: "openExternalUrl",
-        data: {
-          url: url
-        }
-      });
-    }
-  },
   nativeBars: {
     handler: undefined,
     setEventListener: function(handler) {
@@ -361,6 +270,97 @@ var cobalt = window.cobalt || {
       if (this.storage) {
         return this.storage.removeItem(uid)
       }
+    }
+  },
+  webLayer: {
+    show: function(page, fadeDuration) {
+      if (page) {
+        cobalt.private.send({type: "webLayer", action: "show", data: {page: page, fadeDuration: fadeDuration}})
+      }
+    },
+    dismiss: function(data) {
+      cobalt.private.send({type: "webLayer", action: "dismiss", data: data});
+    },
+    bringToFront: function() {
+      cobalt.private.send({type: "webLayer", action: "bringToFront"});
+    },
+    sendToBack: function() {
+      cobalt.private.send({type: "webLayer", action: "sendToBack"});
+    }
+  },
+  alert: function(options) {
+    var obj = {};
+    if (options && (options.message || options.title )) {
+      if (typeof options === "string") {
+        options = {message: options};
+      }
+      cobalt.private.utils.extend(obj, {
+        title: options.title,
+        message: options.message,
+        //ensure buttons is an array of strings or default to one Ok button
+        buttons: (options.buttons && cobalt.private.utils.isArray(options.buttons) && options.buttons.length) ? options.buttons : ['Ok'],
+        //only supported on Android
+        cancelable: (options.cancelable) ? true : false
+      });
+      var callback = ( typeof options.callback === "string" || typeof options.callback === "function" ) ? options.callback : undefined;
+      cobalt.private.send({
+        type: "ui", control: "alert", data: obj
+      }, callback);
+      if (cobalt.private.debugInBrowser) {
+        var btns_str = "";
+        cobalt.private.utils.each(obj.buttons, function(index, button) {
+          btns_str += "\t" + index + " - " + button + "\n";
+        });
+        var index = parseInt(window.prompt(
+          "Title : " + obj.title + "\n"
+          + "Message : " + obj.message + "\n"
+          + "Choices : \n" + btns_str, 0), 10);
+
+        switch (typeof callback) {
+          case "function":
+            callback({index: isNaN(index) ? undefined : index});
+            break;
+          case "string":
+            var str_call = callback + "({index : " + index + "})";
+            try {
+              eval(str_call);
+            } catch (e) {
+              cobalt.log('failed to call ', str_call);
+            }
+            break;
+        }
+      }
+    }
+  },
+  toast: function(text) {
+    cobalt.private.send({type: "ui", control: "toast", data: {message: cobalt.private.utils.logToString(text)}});
+  },
+  openExternalUrl: function(url) {
+    if (url) {
+      cobalt.private.send({
+        type: "intent",
+        action: "openExternalUrl",
+        data: {
+          url: url
+        }
+      });
+    }
+  },
+  pullToRefresh: {
+    setTexts: function(pullToRefreshText, refreshingText) {
+      if (typeof pullToRefreshText !== "string") pullToRefreshText = undefined;
+      if (typeof refreshingText !== "string") pullToRefreshText = undefined
+      cobalt.private.send({
+        type: "ui",
+        control: "pullToRefresh",
+        data: {
+          action: "setTexts",
+          texts: {
+            pullToRefresh: pullToRefreshText,
+            refreshing: refreshingText
+          }
+        }
+      });
     }
   },
   plugins: {
