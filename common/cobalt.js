@@ -428,13 +428,7 @@ var cobalt = window.cobalt || {
       });
     },
     dismiss: function(){
-      cobalt.private.send({
-        type: "ui",
-        control: "pullToRefresh",
-        data: {
-          action: "dismiss",
-        }
-      });
+      cobalt.private.send({type: "callback", callback: "pullToRefresh"});
     }
   },
   onBackButtonPressed: {
@@ -443,6 +437,11 @@ var cobalt = window.cobalt || {
     },
     deny:function(){
       cobalt.private.send({type: "callback", callback: "onBackButtonPressed", data: {value : false}});
+    }
+  },
+  onInfiniteScroll: {
+    dismiss: function(){
+      cobalt.private.send({type: "callback", callback: "infiniteScrollDidRefresh"});
     }
   },
   plugins: {
