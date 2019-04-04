@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  *
  * TODO native side of cobalt.onBackPressed.dismiss()
- * TODO web & native side of cobalt.onBackButtonPressed.allow()
- * TODO web & native side of cobalt.onBackButtonPressed.deny()
+ * TODO native side of cobalt.onBackButtonPressed.allow()
+ * TODO native side of cobalt.onBackButtonPressed.deny()
 
  * TODO proxy cobalt:onPageShown to subsribe callback
  * TODO proxy cobalt:onBackButtonPressed to subsribe callback
@@ -431,17 +431,17 @@ var cobalt = window.cobalt || {
       cobalt.private.send({type: "callback", callback: "pullToRefresh"});
     }
   },
-  onBackButtonPressed: {
+  infiniteScroll: {
+    dismiss: function(){
+      cobalt.private.send({type: "callback", callback: "infiniteScrollDidRefresh"});
+    }
+  },
+  backButtonPressed: {
     allow: function(){
       cobalt.private.send({type: "callback", callback: "onBackButtonPressed", data: {value : true}});
     },
     deny:function(){
       cobalt.private.send({type: "callback", callback: "onBackButtonPressed", data: {value : false}});
-    }
-  },
-  onInfiniteScroll: {
-    dismiss: function(){
-      cobalt.private.send({type: "callback", callback: "infiniteScrollDidRefresh"});
     }
   },
   plugins: {
@@ -581,7 +581,7 @@ var cobalt = window.cobalt || {
           switch (json.event) {
             case "onBackButtonPressed":
               cobalt.log('sending OK for a native back');
-              cobalt.onBackButtonPressed.allow();
+              cobalt.backButtonPressed.allow();
               break;
             default :
               cobalt.adapter.handleUnknown(json);
