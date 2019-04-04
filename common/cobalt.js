@@ -21,6 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
+ * TODO native side of cobalt.onBackPressed.dismiss()
+ * TODO web & native side of cobalt.onBackButtonPressed.allow()
+ * TODO web & native side of cobalt.onBackButtonPressed.deny()
+
+ * TODO proxy cobalt:onPageShown to subsribe callback
+ * TODO proxy cobalt:onBackButtonPressed to subsribe callback
+ * TODO proxy cobalt:onPullToRefresh to subsribe callback
+ * TODO proxy cobalt:onInfiniteScroll to subsribe callback
+ *
+ * TODO find a new way to callback for pullToRefresh
+ * TODO find a new way to callback for infiniteScroll
  * TODO remove debugInDiv
  * TODO missing debugInBrowser unsubscribe.
  * TODO remove execute shortcut. native should cll cobalt.private.execute
@@ -415,6 +426,23 @@ var cobalt = window.cobalt || {
           }
         }
       });
+    },
+    dismiss: function(){
+      cobalt.private.send({
+        type: "ui",
+        control: "pullToRefresh",
+        data: {
+          action: "dismiss",
+        }
+      });
+    }
+  },
+  onBackButtonPressed: {
+    allow: function(){
+      cobalt.private.send({type: "callback", callback: "onBackButtonPressed", data: {value : true}});
+    },
+    deny:function(){
+      cobalt.private.send({type: "callback", callback: "onBackButtonPressed", data: {value : false}});
     }
   },
   plugins: {
@@ -554,7 +582,7 @@ var cobalt = window.cobalt || {
           switch (json.event) {
             case "onBackButtonPressed":
               cobalt.log('sending OK for a native back');
-              cobalt.private.send({type: "callback", callback: json.callback, data: {value: true}});
+              cobalt.onBackButtonPressed.allow();
               break;
             default :
               cobalt.adapter.handleUnknown(json);
