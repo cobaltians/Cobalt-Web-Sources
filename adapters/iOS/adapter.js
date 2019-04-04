@@ -20,23 +20,6 @@ cobalt.ios_adapter = {
       }
     }
   },
-  //datePicker stuff
-  datePicker: {
-    init: function(inputs) {
-      cobalt.utils.each(inputs, function() {
-        var input = this;
-        var id = cobalt.utils.attr(input, 'id');
-
-        var placeholder = cobalt.utils.attr(input, 'placeholder');
-        if (placeholder) {
-          cobalt.utils.append(document.head, '<style> #' + id + ':before{ content:"' + placeholder + '"; ' + cobalt.datePicker.placeholderStyles + ' } #' + id + ':focus:before,#' + id + '.not_empty:before{ content:none }</style>')
-        }
-
-        input.addEventListener('change', cobalt.datePicker.updateFromValue, false);
-        input.addEventListener('keyup', cobalt.datePicker.updateFromValue, false);
-      });
-    }
-  },
   //default behaviours
   handleCallback: cobalt.defaultBehaviors.handleCallback,
   handleEvent: cobalt.defaultBehaviors.handleEvent,
