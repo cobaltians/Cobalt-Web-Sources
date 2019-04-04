@@ -1,14 +1,10 @@
-cobalt.ios_adapter = {
-  //
-  //IOS ADAPTER
-  //
+cobalt.private.ios_adapter = {
   init: function() {
     cobalt.platform = {name: "iOS", isIOS: true, isAndroid: false};
   },
-  //send native stuff
   send: function(obj) {
-    if (obj && !cobalt.debugInBrowser) {
-      cobalt.divLog('sending', obj);
+    if (obj && !cobalt.private.debugInBrowser) {
+      cobalt.private.divLog('sending', obj);
       if (window.CobaltViewController && CobaltViewController.onCobaltMessage) {
         try {
           CobaltViewController.onCobaltMessage(JSON.stringify(obj));
@@ -16,16 +12,16 @@ cobalt.ios_adapter = {
           cobalt.log('ERROR : cant stringify message to send to native', e);
         }
       } else {
-        cobalt.divLog('ERROR : cant connect to native.');
+        cobalt.private.divLog('ERROR : cant connect to native.');
       }
     }
   },
   //default behaviours
-  handleCallback: cobalt.defaultBehaviors.handleCallback,
-  handleEvent: cobalt.defaultBehaviors.handleEvent,
-  handleUnknown: cobalt.defaultBehaviors.handleUnknown,
-  navigateToModal: cobalt.defaultBehaviors.navigateToModal,
-  dismissFromModal: cobalt.defaultBehaviors.dismissFromModal,
-  initStorage: cobalt.defaultBehaviors.initStorage
+  handleCallback: cobalt.private.defaultBehaviors.handleCallback,
+  handleEvent: cobalt.private.defaultBehaviors.handleEvent,
+  handleUnknown: cobalt.private.defaultBehaviors.handleUnknown,
+  navigateToModal: cobalt.private.defaultBehaviors.navigateToModal,
+  dismissFromModal: cobalt.private.defaultBehaviors.dismissFromModal,
+  initStorage: cobalt.private.defaultBehaviors.initStorage
 
 };
