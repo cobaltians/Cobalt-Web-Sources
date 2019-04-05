@@ -21,11 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * TODO proxy event cobalt:onPageShown to subsribe callback
- * TODO proxy event cobalt:onBackButtonPressed to subsribe callback
- * TODO proxy event cobalt:onPullToRefresh to subsribe callback
- * TODO proxy event cobalt:onInfiniteScroll to subsribe callback
- *
  * TODO only accept functions in subscribe and callbacks
  *
  * TODO remove debugInDiv
@@ -501,8 +496,21 @@ var cobalt = window.cobalt || {
         cobalt.private.events[json.event](json.data, json.callback);
       } else {
         switch (json.event) {
-          case "onBackButtonPressed":
-            cobalt.navigate.pop();
+          case "cobalt:onBackButtonPressed":
+            if (cobalt.private.pubsub.handlers[json.event]) {
+              cobalt.private.pubsub.handlers[json.event]();
+            } else {
+              cobalt.navigate.pop();
+            }
+            break;
+          case "cobalt:onPageShown":
+          case "cobalt:onPullToRefresh":
+          case "cobalt:onInfiniteScroll":
+            if (cobalt.private.pubsub.handlers[json.event]) {
+              cobalt.private.pubsub.handlers[json.event]();
+            } else {
+              cobalt.log('received unhandled ', json.event);
+            }
             break;
           default :
             cobalt.private.adapter.handleUnknown(json);
