@@ -17,10 +17,8 @@ cobalt.private.ios_adapter = {
     }
   },
   //default behaviours
-  handleCallback: cobalt.private.defaultBehaviors.handleCallback,
-  handleEvent: cobalt.private.defaultBehaviors.handleEvent,
-  handleUnknown: cobalt.private.defaultBehaviors.handleUnknown,
   navigateToModal: cobalt.private.defaultBehaviors.navigateToModal,
+  storeModalInformations: cobalt.private.defaultBehaviors.storeModalInformations,
   dismissFromModal: cobalt.private.defaultBehaviors.dismissFromModal,
   initStorage: cobalt.private.defaultBehaviors.initStorage
 

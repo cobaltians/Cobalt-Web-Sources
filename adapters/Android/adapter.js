@@ -23,11 +23,12 @@ cobalt.private.android_adapter = {
         data: options.data,
         bars: options.bars
       }
-    }, 'cobalt.private.adapter.storeModalInformations');
+    });
   },
+
   dismissFromModal: function(data) {
     var dismissInformations = cobalt.storage.get("dismissInformations");
-    if (dismissInformations && dismissInformations.page && dismissInformations.controller) {
+    if (dismissInformations) {
       cobalt.private.send({
         "type": "navigation",
         "action": "dismiss",
@@ -57,9 +58,5 @@ cobalt.private.android_adapter = {
       cobalt.log("LocalStorage WARNING : can't find android class LocalStorage. switching to raw localStorage")
     }
     return cobalt.storage.enable();
-  },
-  //default behaviours
-  handleEvent: cobalt.private.defaultBehaviors.handleEvent,
-  handleCallback: cobalt.private.defaultBehaviors.handleCallback,
-  handleUnknown: cobalt.private.defaultBehaviors.handleUnknown
+  }
 };

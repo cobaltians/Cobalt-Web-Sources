@@ -21,13 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * TODO proxy cobalt:onPageShown to subsribe callback
- * TODO proxy cobalt:onBackButtonPressed to subsribe callback
- * TODO proxy cobalt:onPullToRefresh to subsribe callback
- * TODO proxy cobalt:onInfiniteScroll to subsribe callback
+ * TODO proxy event cobalt:onPageShown to subsribe callback
+ * TODO proxy event cobalt:onBackButtonPressed to subsribe callback
+ * TODO proxy event cobalt:onPullToRefresh to subsribe callback
+ * TODO proxy event cobalt:onInfiniteScroll to subsribe callback
+ *
+ * TODO only accept functions in subscribe and callbacks
  *
  * TODO remove debugInDiv
- * TODO missing debugInBrowser code for unsubscribe.
+ * TODO debugInBrowser code for pubsub
  * TODO write in-code documentation for all public methods
  */
 var cobalt = window.cobalt || {
@@ -75,42 +77,26 @@ var cobalt = window.cobalt || {
       return false
     }
     cobalt.private.send({ type : "pubsub", action : "publish", channel : channel, message : message});
-    if (cobalt.private.debugInBrowser){
-      //use a storage fallback for debugging.
-      console.log('sending cobalt pubsub for channel', channel, 'with message', message);
-      localStorage.setItem('COBALT:DEBUG:PUBSUB:' + channel, JSON.stringify(message));
-    }
   },
   subscribe: function(channel, callback){
     if (typeof channel !== "string") {
       cobalt.log('pubsub error : channel must be a string.')
       return false
     }
-    var callback_id = cobalt.private.registerCallback(callback)
-    if (typeof callback_id !== "string") {
-      cobalt.log('pubsub error : callback must be function.');
+    if (typeof callback !== "function") {
+      cobalt.log('pubsub error : callback must be a function.')
       return false
     }
-    cobalt.private.send({ type : "pubsub", action : "subscribe", channel : channel, callback : callback_id });
+    cobalt.private.pubsub.handlers[channel] = callback;
+    cobalt.private.send({ type : "pubsub", action : "subscribe", channel : channel });
 
-    if (cobalt.debugInBrowser) {
-      //use a storage fallback for debugging.
-      setInterval(function() {
-        var msg = localStorage.getItem('COBALT:DEBUG:PUBSUB:' + channel);
-        if (msg) {
-          var message = JSON.parse(msg);
-          console.log('received cobalt pubsub event for channel', channel, 'with message', message);
-          callback(message);
-          localStorage.removeItem('COBALT:DEBUG:PUBSUB:' + channel);
-        }
-      }, 500);
-    }
   },
   unsubscribe: function(channel){
     if (typeof channel !== "string") {
       cobalt.log('pubsub error : channel must be a string.');
       return false
     }
+    delete cobalt.private.pubsub.handlers[channel];
     cobalt.private.send({ type : "pubsub", action : "unsubscribe", channel : channel  });
   },
   navigate: {
@@ -339,48 +325,40 @@ var cobalt = window.cobalt || {
     }
   },
   alert: function(options) {
-    var obj = {};
-    if (options && (options.message || options.title )) {
-      if (typeof options === "string") {
-        options = {message: options};
-      }
-      cobalt.private.utils.extend(obj, {
-        title: options.title,
-        message: options.message,
-        //ensure buttons is an array of strings or default to one Ok button
-        buttons: (options.buttons && cobalt.private.utils.isArray(options.buttons) && options.buttons.length) ? options.buttons : ['Ok'],
-        //only supported on Android
-        cancelable: (options.cancelable) ? true : false
-      });
-      var callback = ( typeof options.callback === "string" || typeof options.callback === "function" ) ? options.callback : undefined;
-      cobalt.private.send({
-        type: "ui", control: "alert", data: obj
-      }, callback);
-      if (cobalt.private.debugInBrowser) {
-        var btns_str = "";
-        cobalt.private.utils.each(obj.buttons, function(index, button) {
-          btns_str += "\t" + index + " - " + button + "\n";
-        });
-        var index = parseInt(window.prompt(
-          "Title : " + obj.title + "\n"
-          + "Message : " + obj.message + "\n"
-          + "Choices : \n" + btns_str, 0), 10);
-
-        switch (typeof callback) {
-          case "function":
-            callback({index: isNaN(index) ? undefined : index});
-            break;
-          case "string":
-            var str_call = callback + "({index : " + index + "})";
-            try {
-              eval(str_call);
-            } catch (e) {
-              cobalt.log('failed to call ', str_call);
-            }
-            break;
-        }
-      }
+    if (!options || (!options.message && !options.title)) {
+      return cobalt.log('alert error : you must set at least message or title')
     }
+    if (options.buttons && !Array.isArray(options.buttons)) {
+      return cobalt.log('alert error : invalid buttons list')
+    }
+
+    var obj = {};
+    cobalt.private.utils.extend(obj, {
+      title: options.title,
+      message: options.message,
+      buttons: options.buttons || ['Ok'],
+      cancelable:  (options.cancelable !== false), // default to true;
+      alertId : (cobalt.private.alert.id++)
+    });
+    if (typeof options.callback === 'function') {
+      cobalt.private.alert.handlers[obj.alertId] = options.callback;
+    }
+    cobalt.private.send({
+      type: "ui", control: "alert", data: obj
+    });
+
+    if (cobalt.private.debugInBrowser) {
+      var btns_str = "";
+      cobalt.private.utils.each(obj.buttons, function(index, button) {
+        btns_str += "\t" + index + " - " + button + "\n";
+      });
+      var index = parseInt(window.prompt(
+        "Title : " + obj.title + "\n"
+        + "Message : " + obj.message + "\n"
+        + "Choices : \n" + btns_str, 0), 10);
+      options.callback(isNaN(index) ? undefined : index);
+    }
+
   },
   toast: function(text) {
     cobalt.private.send({type: "ui", control: "toast", data: {message: cobalt.private.utils.logToString(text)}});
@@ -463,32 +441,16 @@ var cobalt = window.cobalt || {
         cobalt.private.utils.append(document.body, '<div id="cobalt_logdiv" style="width:100%; text-align: left; height: 100px; border:1px solid blue; overflow: scroll; background:#eee;"></div>')
       }
     },
-    send: function(obj, callback) {
+    send: function(obj) {
       if (!typeof obj === "object") return;
-      if (callback) {
-        obj.callback = cobalt.private.registerCallback(callback);
-      }
       if (window.Android || window.CobaltViewController) {
         cobalt.private.debugInBrowser = false;
       }
       if (cobalt.private.debugInBrowser) {
         cobalt.log('sending', obj);
       } else if (cobalt.private.adapter) {
-        cobalt.private.adapter.send(obj, callback);
+        cobalt.private.adapter.send(obj);
       }
-    },
-    registerCallback: function(callback) {
-      var callbackId;
-      if (callback) {
-        if (typeof callback === "function") {
-          callbackId = "" + (cobalt.private.lastCallbackId++);
-          cobalt.private.callbacks[callbackId] = callback;
-          cobalt.private.callbacks.latest = callback;
-        } else if (typeof callback === "string") {
-          callbackId = callback;
-        }
-      }
-      return callbackId;
     },
     execute: function(json) {
       cobalt.private.divLog("received", json);
@@ -506,72 +468,77 @@ var cobalt = window.cobalt || {
             cobalt.private.plugins.handleEvent(json);
             break;
           case "event":
-            cobalt.private.adapter.handleEvent(json);
+            cobalt.private.handleEvent(json);
             break;
-          case "callback":
-            cobalt.private.adapter.handleCallback(json);
+          case "pubsub":
+            cobalt.private.pubsub.handleMessage(json);
             break;
           case "ui":
             switch (json.control) {
               case "bars":
                 cobalt.nativeBars.handleEvent(json.data);
                 break;
+              case "alert":
+                cobalt.private.alert.handleResult(json.data);
+                break;
+            }
+            break;
+          case "navigation":
+            switch (json.action) {
+              case "modal":
+                cobalt.private.adapter.storeModalInformations(json.data);
+                break;
             }
             break;
           default:
-            cobalt.private.adapter.handleUnknown(json)
+            cobalt.private.handleUnknown(json)
         }
       } catch (e) {
         cobalt.log('cobalt.private.execute failed : ' + e)
       }
     },
-    tryToCallCallback: function(json) {
-      cobalt.private.divLog('trying to call web callback');
-      var callbackfunction = null;
-      if (cobalt.private.utils.isNumber(json.callback) && typeof cobalt.private.callbacks[json.callback] === "function") {
-        //if it's a number, a real JS callback should exist in cobalt.private.callbacks
-        callbackfunction = cobalt.private.callbacks[json.callback]
-
-      } else if (typeof json.callback === "string") {
-        //if it's a string, check if function exists
-        callbackfunction = eval(json.callback);
-      }
-      if (typeof callbackfunction === "function") {
-        try {
-          callbackfunction(json.data)
-        } catch (e) {
-          cobalt.log('Failed calling callback : ' + e)
-        }
+    handleEvent: function(json) {
+      cobalt.log("received event", json.event);
+      if (cobalt.private.events && typeof cobalt.private.events[json.event] === "function") {
+        cobalt.private.events[json.event](json.data, json.callback);
       } else {
-        cobalt.private.adapter.handleUnknown(json);
-      }
-    },
-    defaultBehaviors: {
-      handleEvent: function(json) {
-        cobalt.log("received event", json.event);
-        if (cobalt.private.events && typeof cobalt.private.events[json.event] === "function") {
-          cobalt.private.events[json.event](json.data, json.callback);
-        } else {
-          switch (json.event) {
-            case "onBackButtonPressed":
-              cobalt.navigate.pop();
-              break;
-            default :
-              cobalt.private.adapter.handleUnknown(json);
-              break;
-          }
-        }
-      },
-      handleCallback: function(json) {
-        switch (json.callback) {
-          default:
-            cobalt.private.tryToCallCallback(json);
+        switch (json.event) {
+          case "onBackButtonPressed":
+            cobalt.navigate.pop();
+            break;
+          default :
+            cobalt.private.adapter.handleUnknown(json);
             break;
         }
-      },
-      handleUnknown: function(json) {
-        cobalt.log('received unhandled message ', json);
-      },
+      }
+    },
+    alert: {
+      id: 0,
+      handlers:[],
+      handleResult: function(data) {
+        var handler = cobalt.private.alert.handlers[data.alertId];
+        if (handler && typeof handler === 'function') {
+          cobalt.private.alert.handlers[data.alertId](data.index);
+        } else {
+          cobalt.log('warning : received alert result index=' + data.index + ' but no handler found.')
+        }
+      }
+    },
+    pubsub: {
+      handlers: {},
+      handleMessage : function(json) {
+        var handler = cobalt.private.pubsub.handlers[json.channel];
+        if (handler && typeof handler === 'function') {
+          cobalt.private.pubsub.handlers[json.channel](json.message);
+        } else {
+          cobalt.log('warning : received pubsub message on channel ' + json.channel + ' but no handler found.')
+        }
+      }
+    },
+    handleUnknown: function(json) {
+      cobalt.log('received unhandled message ', json);
+    },
+    defaultBehaviors: {
       navigateToModal: function(options) {
         cobalt.private.send({
           "type": "navigation", "action": "modal", data: {
@@ -587,7 +554,8 @@ var cobalt = window.cobalt || {
       },
       initStorage: function() {
         return cobalt.storage.enable()
-      }
+      },
+      storeModalInformations: function() {}
     },
     utils: {
       $: function(selector) {
@@ -619,7 +587,6 @@ var cobalt = window.cobalt || {
         }
         return stuff;
       },
-
       class2type: {},
       attr: function(node, attr, value) {
         node = cobalt.private.utils.$(node);
