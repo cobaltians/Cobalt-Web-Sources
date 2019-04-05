@@ -399,7 +399,6 @@ var cobalt = window.cobalt || {
     }
   },
   private: {
-    events: {},
     version: '1.0',
     debugInBrowser: false,
     debugInDiv: false,
@@ -484,38 +483,33 @@ var cobalt = window.cobalt || {
             }
             break;
           default:
-            cobalt.private.handleUnknown(json)
+            cobalt.log('received unhandled message ', json);
         }
       } catch (e) {
         cobalt.log('cobalt.private.execute failed : ' + e)
       }
     },
     handleEvent: function(json) {
-      cobalt.log("received event", json.event);
-      if (cobalt.private.events && typeof cobalt.private.events[json.event] === "function") {
-        cobalt.private.events[json.event](json.data, json.callback);
-      } else {
-        switch (json.event) {
-          case "cobalt:onBackButtonPressed":
-            if (cobalt.private.pubsub.handlers[json.event]) {
-              cobalt.private.pubsub.handlers[json.event]();
-            } else {
-              cobalt.navigate.pop();
-            }
-            break;
-          case "cobalt:onPageShown":
-          case "cobalt:onPullToRefresh":
-          case "cobalt:onInfiniteScroll":
-            if (cobalt.private.pubsub.handlers[json.event]) {
-              cobalt.private.pubsub.handlers[json.event]();
-            } else {
-              cobalt.log('received unhandled ', json.event);
-            }
-            break;
-          default :
-            cobalt.private.handleUnknown(json);
-            break;
-        }
+      switch (json.event) {
+        case "cobalt:onBackButtonPressed":
+          if (cobalt.private.pubsub.handlers[json.event]) {
+            cobalt.private.pubsub.handlers[json.event]();
+          } else {
+            cobalt.navigate.pop();
+          }
+          break;
+        case "cobalt:onPageShown":
+        case "cobalt:onPullToRefresh":
+        case "cobalt:onInfiniteScroll":
+          if (cobalt.private.pubsub.handlers[json.event]) {
+            cobalt.private.pubsub.handlers[json.event]();
+          } else {
+            cobalt.log('received unhandled ', json.event);
+          }
+          break;
+        default :
+          cobalt.log('received unhandled event ', json);
+          break;
       }
     },
     alert: {
@@ -542,7 +536,7 @@ var cobalt = window.cobalt || {
       }
     },
     handleUnknown: function(json) {
-      cobalt.log('received unhandled message ', json);
+
     },
     defaultBehaviors: {
       navigateToModal: function(options) {
