@@ -354,7 +354,7 @@ var cobalt = window.cobalt || {
         "Title : " + obj.title + "\n"
         + "Message : " + obj.message + "\n"
         + "Choices : \n" + btns_str, 0), 10);
-      cobalt.private.alert.handleResult(isNaN(index) ? undefined : index);
+      cobalt.private.alert.handleResult({ alertId: obj.alertId, index: isNaN(index) ? undefined : index });
     }
 
   },
