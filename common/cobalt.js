@@ -513,7 +513,7 @@ var cobalt = window.cobalt || {
             }
             break;
           default :
-            cobalt.private.adapter.handleUnknown(json);
+            cobalt.private.handleUnknown(json);
             break;
         }
       }
