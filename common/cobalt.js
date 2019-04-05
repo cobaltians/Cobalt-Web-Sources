@@ -384,12 +384,12 @@ var cobalt = window.cobalt || {
       });
     },
     dismiss: function(){
-      cobalt.private.send({type: "ui",  control: "pullToRefresh", action: "dismiss"});
+      cobalt.private.send({type: "ui",  control: "pullToRefresh", data: {action: "dismiss"}});
     }
   },
   infiniteScroll: {
     dismiss: function(){
-      cobalt.private.send({type: "ui",  control: "infiniteScroll", action: "dismiss"});
+      cobalt.private.send({type: "ui",  control: "infiniteScroll", data: {action: "dismiss"}});
     }
   },
   plugins: {
