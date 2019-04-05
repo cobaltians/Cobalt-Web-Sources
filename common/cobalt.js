@@ -114,9 +114,7 @@ var cobalt = window.cobalt || {
           }
         });
         if (cobalt.private.debugInBrowser && window.event && window.event.altKey) {
-          setTimeout(function() {
-            window.open(options.page, '_blank');
-          }, 0);
+          window.location = options.page || 'index.html';
         }
       }
     },
