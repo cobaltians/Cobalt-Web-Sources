@@ -88,7 +88,7 @@ var cobalt = window.cobalt || {
       cobalt.log('pubsub error : channel must be a string.')
       return false
     }
-    var callback_id = cobalt.registerCallback(callback)
+    var callback_id = cobalt.private.registerCallback(callback)
     if (typeof callback_id !== "string") {
       cobalt.log('pubsub error : callback must be function.');
       return false
