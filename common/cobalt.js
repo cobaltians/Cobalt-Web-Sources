@@ -57,9 +57,8 @@ var cobalt = window.cobalt || {
       cobalt.adapter.init();
     }
     cobalt.private.plugins.init();
-    if (!options.manualReady) {
-      cobalt.private.send({'type': 'cobaltIsReady', version: cobalt.private.version})
-    }
+
+    cobalt.private.send({'type': 'cobaltIsReady', version: cobalt.private.version})
   },
   log: function() {
     var logString = cobalt.private.argumentsToString(arguments);
