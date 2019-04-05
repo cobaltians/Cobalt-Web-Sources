@@ -27,7 +27,6 @@
  * TODO proxy cobalt:onInfiniteScroll to subsribe callback
  *
  * TODO remove debugInDiv
- * TODO remove pluginsOptions
  * TODO missing debugInBrowser code for unsubscribe.
  * TODO write in-code documentation for all public methods
  */
@@ -41,7 +40,6 @@ var cobalt = window.cobalt || {
       this.debug = (options.debug !== false); // default to true;
 
       cobalt.private.debugInDiv = ( options.debugInDiv === true );
-      cobalt.private.plugins.pluginsOptions = options.plugins || {};
 
       if (cobalt.private.debugInDiv) {
         cobalt.private.createLogDiv();
@@ -780,7 +778,6 @@ var cobalt = window.cobalt || {
       }
     },
     plugins: {
-      pluginsOptions: {},
       enabledPlugins: {},
       //add a plugin to the plugin list.
       register: function(plugin) {
@@ -792,8 +789,7 @@ var cobalt = window.cobalt || {
         for (var pluginName in cobalt.private.plugins.enabledPlugins) {
           if (cobalt.private.plugins.enabledPlugins[pluginName]) {
             //init each plugin with options set at the init step.
-            var options = cobalt.private.plugins.pluginsOptions[pluginName];
-            cobalt.private.plugins.enabledPlugins[pluginName].init(options);
+            cobalt.private.plugins.enabledPlugins[pluginName].init();
           }
         }
       },
