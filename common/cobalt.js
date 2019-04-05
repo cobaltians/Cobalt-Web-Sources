@@ -27,34 +27,29 @@
  * TODO proxy cobalt:onInfiniteScroll to subsribe callback
  *
  * TODO remove debugInDiv
+ * TODO remove pluginsOptions
  * TODO missing debugInBrowser code for unsubscribe.
-  * TODO write in-code documentation for all public methods
+ * TODO write in-code documentation for all public methods
  */
 var cobalt = window.cobalt || {
-  // public settings
   debug: true,
 
   // public methods
   init: function(options) {
     cobalt.private.utils.init();
     if (options) {
-      this.debug = ( options.debug === true );
-      if (options.debugInBrowser !== undefined) {
-        cobalt.private.debugInBrowser = options.debugInBrowser;
-      }
+      this.debug = (options.debug !== false); // default to true;
+
       cobalt.private.debugInDiv = ( options.debugInDiv === true );
       cobalt.private.plugins.pluginsOptions = options.plugins || {};
 
       if (cobalt.private.debugInDiv) {
         cobalt.private.createLogDiv();
       }
-      cobalt.storage.enable();
-
-    } else {
-      cobalt.storage.enable();
     }
-    if (cobalt.adapter && cobalt.adapter.init) {
-      cobalt.adapter.init();
+    cobalt.storage.enable();
+    if (cobalt.private.adapter) {
+      cobalt.private.adapter.init();
     }
     cobalt.private.plugins.init();
 
@@ -176,7 +171,7 @@ var cobalt = window.cobalt || {
     },
     modal: function(options) {
       if (options && (options.page || options.controller)) {
-        cobalt.adapter.navigateToModal(options);
+        cobalt.private.adapter.navigateToModal(options);
 
         if (cobalt.private.debugInBrowser && window.event && window.event.altKey) {
           setTimeout(function() {
@@ -186,7 +181,7 @@ var cobalt = window.cobalt || {
       }
     },
     dismiss: function(data) {
-      cobalt.adapter.dismissFromModal(data);
+      cobalt.private.adapter.dismissFromModal(data);
 
       if (cobalt.private.debugInBrowser && window.event && window.event.altKey) {
         window.close();
@@ -480,8 +475,8 @@ var cobalt = window.cobalt || {
       }
       if (cobalt.private.debugInBrowser) {
         cobalt.log('sending', obj);
-      } else if (cobalt.adapter) {
-        cobalt.adapter.send(obj, callback);
+      } else if (cobalt.private.adapter) {
+        cobalt.private.adapter.send(obj, callback);
       }
     },
     registerCallback: function(callback) {
@@ -513,10 +508,10 @@ var cobalt = window.cobalt || {
             cobalt.private.plugins.handleEvent(json);
             break;
           case "event":
-            cobalt.adapter.handleEvent(json);
+            cobalt.private.adapter.handleEvent(json);
             break;
           case "callback":
-            cobalt.adapter.handleCallback(json);
+            cobalt.private.adapter.handleCallback(json);
             break;
           case "ui":
             switch (json.control) {
@@ -526,7 +521,7 @@ var cobalt = window.cobalt || {
             }
             break;
           default:
-            cobalt.adapter.handleUnknown(json)
+            cobalt.private.adapter.handleUnknown(json)
         }
       } catch (e) {
         cobalt.log('cobalt.private.execute failed : ' + e)
@@ -550,7 +545,7 @@ var cobalt = window.cobalt || {
           cobalt.log('Failed calling callback : ' + e)
         }
       } else {
-        cobalt.adapter.handleUnknown(json);
+        cobalt.private.adapter.handleUnknown(json);
       }
     },
     defaultBehaviors: {
@@ -564,7 +559,7 @@ var cobalt = window.cobalt || {
               cobalt.navigate.pop();
               break;
             default :
-              cobalt.adapter.handleUnknown(json);
+              cobalt.private.adapter.handleUnknown(json);
               break;
           }
         }

@@ -23,7 +23,7 @@ cobalt.private.android_adapter = {
         data: options.data,
         bars: options.bars
       }
-    }, 'cobalt.adapter.storeModalInformations');
+    }, 'cobalt.private.adapter.storeModalInformations');
   },
   dismissFromModal: function(data) {
     var dismissInformations = cobalt.storage.get("dismissInformations");
