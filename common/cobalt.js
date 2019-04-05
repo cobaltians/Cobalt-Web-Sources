@@ -26,12 +26,9 @@
  * TODO proxy cobalt:onPullToRefresh to subsribe callback
  * TODO proxy cobalt:onInfiniteScroll to subsribe callback
  *
- * TODO find a new way to callback for pullToRefresh
- * TODO find a new way to callback for infiniteScroll
  * TODO remove debugInDiv
- * TODO missing debugInBrowser unsubscribe.
- * TODO remove execute shortcut. native should cll cobalt.private.execute
- * TODO write in-code documentation for all public methods
+ * TODO missing debugInBrowser code for unsubscribe.
+  * TODO write in-code documentation for all public methods
  */
 var cobalt = window.cobalt || {
   // public settings
@@ -438,9 +435,6 @@ var cobalt = window.cobalt || {
       return cobalt.private.plugins.register(plugin);
     }
   },
-  execute: function(json) {
-    return cobalt.private.execute(json)
-  },
   private: {
     events: {},
     version: '1.0',
@@ -536,7 +530,7 @@ var cobalt = window.cobalt || {
             cobalt.adapter.handleUnknown(json)
         }
       } catch (e) {
-        cobalt.log('cobalt.execute failed : ' + e)
+        cobalt.log('cobalt.private.execute failed : ' + e)
       }
     },
     tryToCallCallback: function(json) {
