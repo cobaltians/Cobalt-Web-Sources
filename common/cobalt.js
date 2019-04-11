@@ -21,9 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * TODO only accept functions in subscribe and callbacks
- *
- * TODO remove debugInDiv
  * TODO debugInBrowser code for pubsub
  * TODO write in-code documentation for all public methods
  */
@@ -34,12 +31,12 @@ var cobalt = window.cobalt || {
   init: function(options) {
     cobalt.private.utils.init();
     if (options) {
-      this.debug = (options.debug !== false); // default to true;
+      cobalt.debug = (options.debug !== false); // default to true;
 
-      cobalt.private.debugInDiv = ( options.debugInDiv === true );
-
-      if (cobalt.private.debugInDiv) {
+      if (options.debugInDiv) {
+        cobalt.private.debugInDiv = true;
         cobalt.private.createLogDiv();
+        cobalt.private.divLog('cobalt log div enabled');
       }
     }
     cobalt.storage.enable();
@@ -429,7 +426,6 @@ var cobalt = window.cobalt || {
     },
     createLogDiv: function() {
       if (!cobalt.private.utils.$('#cobalt_logdiv')) {
-        //create usefull log div:
         cobalt.private.utils.append(document.body, '<div id="cobalt_logdiv" style="width:100%; text-align: left; height: 100px; border:1px solid blue; overflow: scroll; background:#eee;"></div>')
       }
     },
@@ -444,6 +440,7 @@ var cobalt = window.cobalt || {
         cobalt.private.adapter.send(obj);
       }
     },
+    // called by native side.
     execute: function(json) {
       cobalt.private.divLog("received", json);
       /*parse data if string, die silently if parsing error */
