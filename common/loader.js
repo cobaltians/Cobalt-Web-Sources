@@ -6,6 +6,8 @@ if (isIOS) {
   cobalt.private.adapter = cobalt.private.android_adapter;
 }
 cobalt.private.debugInBrowser = true;
-if (window.Android || window.CobaltViewController){
+if (window.Android || window.CobaltViewController
+  || (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cobalt && window.webkit.messageHandlers.cobalt.postMessage)
+){
   cobalt.private.debugInBrowser = false;
 }

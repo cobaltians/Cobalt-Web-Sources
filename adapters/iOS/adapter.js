@@ -1,18 +1,40 @@
 cobalt.private.ios_adapter = {
+  isWKWebview: false,
   init: function() {
     cobalt.platform = {name: "iOS", isIOS: true, isAndroid: false};
+    this.detectWebviewIfNeeded();
+  },
+  detectWebviewIfNeeded: function(){
+    if (!cobalt.private.adapter.platformDetected) {
+      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cobalt
+        && window.webkit.messageHandlers.cobalt.postMessage) {
+        cobalt.private.divLog('We are on WKWebview');
+        cobalt.private.adapter.isWKWebview = true;
+      } else {
+        if (typeof CobaltViewController === "undefined") {
+          cobalt.private.divLog('Warning : CobaltViewController and webkit.messageHandlers.cobalt.postMessage undefined.');
+        }
+      }
+      cobalt.private.adapter.platformDetected = true;
+    }
   },
   send: function(obj) {
     if (obj && !cobalt.private.debugInBrowser) {
+      this.detectWebviewIfNeeded();
       cobalt.private.divLog('sending', obj);
-      if (window.CobaltViewController && CobaltViewController.onCobaltMessage) {
+      if (cobalt.private.adapter.isWKWebview) {
+        try {
+          window.webkit.messageHandlers.cobalt.postMessage(JSON.stringify(obj));
+        } catch (e) {
+          cobalt.private.divLog('ERROR : cant send to wkwebview.' + e)
+        }
+
+      } else {
         try {
           CobaltViewController.onCobaltMessage(JSON.stringify(obj));
         } catch (e) {
-          cobalt.log('ERROR : cant stringify message to send to native', e);
+          cobalt.private.divLog('ERROR : cant send to webview.' + e)
         }
-      } else {
-        cobalt.private.divLog('ERROR : cant connect to native.');
       }
     }
   },
