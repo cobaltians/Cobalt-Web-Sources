@@ -2,7 +2,7 @@ cobalt.private.ios_adapter = {
   isWKWebview: false,
   init: function() {
     cobalt.platform = {name: "iOS", isIOS: true, isAndroid: false};
-    this.detectWebviewIfNeeded();
+    cobalt.private.adapter.detectWebviewIfNeeded();
   },
   detectWebviewIfNeeded: function(){
     if (!cobalt.private.adapter.platformDetected) {
@@ -20,7 +20,7 @@ cobalt.private.ios_adapter = {
   },
   send: function(obj) {
     if (obj && !cobalt.private.debugInBrowser) {
-      this.detectWebviewIfNeeded();
+      cobalt.private.adapter.detectWebviewIfNeeded();
       cobalt.private.divLog('sending', obj);
       if (cobalt.private.adapter.isWKWebview) {
         try {
