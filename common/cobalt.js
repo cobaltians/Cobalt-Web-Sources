@@ -395,6 +395,10 @@ var cobalt = window.cobalt || {
       return cobalt.private.plugins.register(plugin);
     }
   },
+  send: function(json){
+    // shortcut for plugins
+    cobalt.private.send(json);
+  },
   private: {
     version: '1.0',
     debugInBrowser: false,
