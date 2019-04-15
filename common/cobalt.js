@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
+ * TODO change nativeBars setEventListener by a 'on' function.
  * TODO debugInBrowser code for pubsub
  * TODO write in-code documentation for all public methods
  */
@@ -390,14 +391,12 @@ var cobalt = window.cobalt || {
     }
   },
   plugins: {
-    //called by plugins.
     register: function(plugin) {
       return cobalt.private.plugins.register(plugin);
+    },
+    send: function(plugin, action, data){
+      cobalt.private.send({ type: 'plugin', name: plugin.name, classes: plugin.classes, action: action, data: data });
     }
-  },
-  send: function(json){
-    // shortcut for plugins
-    cobalt.private.send(json);
   },
   private: {
     version: '1.0',
@@ -535,9 +534,6 @@ var cobalt = window.cobalt || {
           cobalt.log('warning : received pubsub message on channel ' + json.channel + ' but no handler found.')
         }
       }
-    },
-    handleUnknown: function(json) {
-
     },
     defaultBehaviors: {
       navigateToModal: function(options) {
@@ -766,7 +762,6 @@ var cobalt = window.cobalt || {
         if (typeof event.name === "string") {
           if (cobalt.private.plugins.enabledPlugins[event.name]
             && typeof cobalt.private.plugins.enabledPlugins[event.name].handleEvent === "function") {
-
             try {
               cobalt.private.plugins.enabledPlugins[event.name].handleEvent(event);
             } catch (e) {
