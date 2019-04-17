@@ -501,6 +501,7 @@ var cobalt = window.cobalt || {
         case "cobalt:onPageShown":
         case "cobalt:onPullToRefresh":
         case "cobalt:onInfiniteScroll":
+        case "cobalt:onWeblayerDismissed":
           if (cobalt.private.pubsub.handlers[json.event]) {
             cobalt.private.pubsub.handlers[json.event]();
           } else {
