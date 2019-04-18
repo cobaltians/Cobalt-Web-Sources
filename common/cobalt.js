@@ -394,8 +394,20 @@ var cobalt = window.cobalt || {
     register: function(plugin) {
       return cobalt.private.plugins.register(plugin);
     },
-    send: function(plugin, action, data){
-      cobalt.private.send({ type: 'plugin', name: plugin.name, classes: plugin.classes, action: action, data: data });
+    send: function(plugin, action, data, callback){
+      var randomChannel = Math.random().toString(36).substring(2);
+      var onMessage = callback || plugin.handleEvent;
+      if (typeof onMessage === 'function') {
+        cobalt.subscribe(randomChannel, onMessage);
+      }
+      cobalt.private.send({
+        type: 'plugin',
+        name: plugin.name,
+        classes: plugin.classes,
+        action: action,
+        data: data,
+        callbackChannel : randomChannel
+      });
     }
   },
   private: {
