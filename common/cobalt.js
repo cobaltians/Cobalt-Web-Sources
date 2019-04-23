@@ -517,7 +517,7 @@ var cobalt = window.cobalt || {
         case "cobalt:onWebLayerLoaded":
         case "cobalt:onWebLayerDismissed":
           if (cobalt.private.pubsub.handlers[json.event]) {
-            cobalt.private.pubsub.handlers[json.event]();
+            cobalt.private.pubsub.handlers[json.event](json.data);
           } else {
             cobalt.log('received unhandled ', json.event);
           }
