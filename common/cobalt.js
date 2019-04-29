@@ -535,11 +535,13 @@ var cobalt = window.cobalt || {
             cobalt.navigate.pop();
           }
           break;
+        case "cobalt:onAppStarted":
         case "cobalt:onPageShown":
         case "cobalt:onPullToRefresh":
         case "cobalt:onInfiniteScroll":
         case "cobalt:onWebLayerLoading":
         case "cobalt:onWebLayerLoaded":
+        case "cobalt:onWebLayerLoadFailed":
         case "cobalt:onWebLayerDismissed":
           if (cobalt.private.pubsub.handlers[json.event]) {
             cobalt.private.pubsub.handlers[json.event](json.data);
