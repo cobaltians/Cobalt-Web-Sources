@@ -21,9 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * TODO change nativeBars setEventListener by a 'on' function.
- * TODO debugInBrowser code for pubsub
- * TODO write in-code documentation for all public methods
  */
 var cobalt = window.cobalt || {
   debug: true,
