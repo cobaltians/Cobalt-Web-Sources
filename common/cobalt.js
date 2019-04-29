@@ -70,6 +70,14 @@ var cobalt = window.cobalt || {
       return false
     }
     cobalt.private.send({ type : "pubsub", action : "publish", channel : channel, message : message});
+
+    if (cobalt.private.debugInBrowser){
+      //use a storage fallback for debugging.
+      var msgs = cobalt.storage.get('cobalt:debug:pubsub:'+channel) || [];
+      msgs.push(message);
+      cobalt.storage.set('cobalt:debug:pubsub:'+channel, msgs);
+    }
+
   },
   subscribe: function(channel, callback){
     if (typeof channel !== "string") {
@@ -83,6 +91,20 @@ var cobalt = window.cobalt || {
     cobalt.private.pubsub.handlers[channel] = callback;
     cobalt.private.send({ type : "pubsub", action : "subscribe", channel : channel });
 
+    if (cobalt.private.debugInBrowser){
+      //use a storage fallback for debugging.
+      //clear previous messages just in case.
+      cobalt.storage.set('cobalt:debug:pubsub:'+channel, []);
+      window['cobalt:debug:pubsub:'+channel] = setInterval(function(){
+        var msgs = cobalt.storage.get('cobalt:debug:pubsub:'+channel) || [];
+        while (msgs.length) {
+          var message = msgs.shift();
+          cobalt.storage.set('cobalt:debug:pubsub:'+channel, msgs);
+          msgs = cobalt.storage.get('cobalt:debug:pubsub:'+channel) || [];
+          callback(message);
+        }
+      },500);
+    }
   },
   unsubscribe: function(channel){
     if (typeof channel !== "string") {
@@ -91,6 +113,9 @@ var cobalt = window.cobalt || {
     }
     delete cobalt.private.pubsub.handlers[channel];
     cobalt.private.send({ type : "pubsub", action : "unsubscribe", channel : channel  });
+    if (cobalt.private.debugInBrowser) {
+      clearInterval(window['cobalt:debug:pubsub:'+channel]);
+    }
   },
   navigate: {
     push: function(options) {
