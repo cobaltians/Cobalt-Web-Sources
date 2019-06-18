@@ -534,6 +534,9 @@ var cobalt = window.cobalt || {
           break;
         case "cobalt:onAppStarted":
         case "cobalt:onPageShown":
+          if (json.data && json.data.viewId) {
+            cobalt.viewId = json.data.viewId;
+          }
         case "cobalt:onPullToRefresh":
         case "cobalt:onInfiniteScroll":
         case "cobalt:onWebLayerLoading":
